@@ -1,0 +1,18 @@
+# Common Files
+.DS_Store
+
+# IDEs
+.idea/
+.settings/
+.classpath
+.project
+*.iml
+
+# Maven
+target/
+
+# Java 
+*.class
+
+# Visual Studio
+.vscode
