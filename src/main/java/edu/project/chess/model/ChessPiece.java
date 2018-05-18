@@ -4,7 +4,7 @@ public abstract class ChessPiece {
 
     private String name;
     
-    // W - White, B = balck;
+    // W - White, B = black;
     private char color;
     private int moveCounter;
 

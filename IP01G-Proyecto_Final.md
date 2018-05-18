@@ -8,7 +8,7 @@ Evaluar los conocimientos adquiridos durante todo el curso de Introducción a la
 
 ## Fecha de entrega 
 
-**17 de mayo 2018**
+**24 de mayo 2018**
 
 
 ## Descripción

@@ -13,9 +13,8 @@ public class ChessApp {
 
         while (!matchDone) {
             playNumber++;
-            
-            String display = chessBoard.convertBoardToString();
-            System.out.println(display);
+
+            System.out.println(chessBoard.convertBoardToString());
             System.out.println();
 
             boolean validMove = false;
@@ -30,7 +29,7 @@ public class ChessApp {
                     validMove = chessBoard.move(playerInput);
                 }
 
-            } while (!validMove);
+            } while (validMove == false);
 
             switch (chessBoard.checkWinner()) {
                 case 'W':
