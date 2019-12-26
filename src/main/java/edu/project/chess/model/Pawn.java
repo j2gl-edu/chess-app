@@ -6,6 +6,7 @@ public class Pawn extends ChessPiece {
         super("Pawn", color);
     }
 
+    @Override
     public String display() {
         return "P";
     }

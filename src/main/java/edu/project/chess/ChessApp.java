@@ -17,9 +17,12 @@ public class ChessApp {
             System.out.println(chessBoard.convertBoardToString());
             System.out.println();
 
-            boolean validMove = false;
+            boolean validMove;
             do {
-                System.out.print(playNumber + " --> ");
+                String command = playNumber + ": ";
+                command += (chessBoard.isWhiteTurn() ? "White" : "Black");
+                command += " turn ---> ";
+                System.out.print(command);
                 String playerInput = reader.nextLine();
 
                 if (playerInput.equalsIgnoreCase("exit")) {
@@ -29,7 +32,7 @@ public class ChessApp {
                     validMove = chessBoard.move(playerInput);
                 }
 
-            } while (validMove == false);
+            } while (!validMove);
 
             switch (chessBoard.checkWinner()) {
                 case 'W':

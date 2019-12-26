@@ -1,13 +1,11 @@
 package edu.project.chess;
 
-import edu.project.chess.model.ChessPiece;
-import edu.project.chess.model.King;
-import edu.project.chess.model.Rook;
+import edu.project.chess.model.*;
 
 public class ChessBoard {
 
-    public static final char WHITE = 'W';
-    public static final char BLACK = 'B';
+    private static final char WHITE = 'W';
+    private static final char BLACK = 'B';
 
     private ChessPiece board[][];
     private ChessPiece blackCapturedPieces[];
@@ -20,13 +18,26 @@ public class ChessBoard {
         initBoard(board);
     }
 
-    private void initBoard(ChessPiece[][] board) {
-        // TODO Setup the board
-        board[0][0] = new Rook(WHITE);
-        board[4][0] = new King(WHITE);
+    private void putPirces(int x, char color) {
+        board[0][x] = new Rook(color);
+        board[1][x] = new Knight(color);
+        board[2][x] = new Bishop(color);
+        board[3][x] = new Queen(color);
+        board[4][x] = new King(color);
+        board[5][x] = new Bishop(color);
+        board[6][x] = new Knight(color);
+        board[7][x] = new Rook(color);
+    }
 
-        board[0][7] = new Rook(BLACK);
-        board[4][7] = new King(BLACK);
+    private void initBoard(ChessPiece[][] board) {
+        putPirces(0, WHITE);
+        putPirces(7, BLACK);
+
+        // Pawns
+        for (int i = 0; i < board.length; i++) {
+            board[i][1] = new Pawn(WHITE);
+            board[i][6] = new Pawn(BLACK);
+        }
     }
 
     /**
@@ -38,7 +49,7 @@ public class ChessBoard {
 
         for (int y = 7; y >= 0; y--) {
             linea += "  +----+----+----+----+----+----+----+----+\n";
-            linea += (y+1) + " ";
+            linea += (y + 1) + " ";
             for (int x = 0; x < 8; x++) {
                 ChessPiece piece = board[x][y];
                 if (piece == null) {
@@ -54,48 +65,21 @@ public class ChessBoard {
         linea += "     A    B    C    D    E    F    G    H";
 
 
-
         return linea;
-        // TODO: Use several loops statements to iterate over board matrix to return a String.
-
-//        String s =
-//        "   +----+----+----+----+----+----+----+----+\n" +
-//        " 8 | bR | bN | bB | bQ | bK | bB | bN | bR |\n" +
-//        "   +----+----+----+----+----+----+----+----+\n" +
-//        " 7 | bP | bP | bP | bP | bP | bP | bP | bP |\n" +
-//        "   +----+----+----+----+----+----+----+----+\n" +
-//        " 6 |    |    |    |    |    |    |    |    |\n" +
-//        "   +----+----+----+----+----+----+----+----+\n" +
-//        " 5 |    |    |    |    |    |    |    |    |\n" +
-//        "   +----+----+----+----+----+----+----+----+\n" +
-//        " 4 |    |    |    |    |    |    |    |    |\n" +
-//        "   +----+----+----+----+----+----+----+----+\n" +
-//        " 3 |    |    |    |    |    |    |    |    |\n" +
-//        "   +----+----+----+----+----+----+----+----+\n" +
-//        " 2 | wP | wP | wP | wP | wP | wP | wP | wP |\n" +
-//        "   +----+----+----+----+----+----+----+----+\n" +
-//        " 1 | wR | wN | wB | wQ | wK | wB | wN | wR |\n" +
-//        "   +----+----+----+----+----+----+----+----+\n" +
-//        "      A    B    C    D    E    F    G    H";
-//        return s;
     }
 
 
     private boolean validatePosition(int number) {
-        if (number >= 0 && number <= 7) {
-            return true;
-        } else {
-            return false;
-        }
+        return number >= 0 && number <= 7;
     }
 
     /**
      * Moves a piece
+     *
      * @param initialPosition The initial position
-     * @param finalPosition The final position
+     * @param finalPosition   The final position
      */
     public boolean move(String initialPosition, String finalPosition) {
-        // TODO implement any move separated by comma.
         // Example
         //   initialPosition = "E2",
         //   finalPosition = "E4"
@@ -107,32 +91,29 @@ public class ChessBoard {
         int x2 = convertColumn(finalPosition.charAt(0));
         int y2 = convertRow(finalPosition.charAt(1) - 48);
 
-        System.out.println("Initial Pos: " + x1 + ", " + y1);
-        System.out.println("Final Pos: " + x2 + ", " + y2);
-
         boolean valid = validatePosition(x1) && validatePosition(y1)
-                            && validatePosition(x2) && validatePosition(y2);
+                && validatePosition(x2) && validatePosition(y2);
 
-        if (valid == false || board[x1][y1] == null) {
+        if (!valid || board[x1][y1] == null) {
             return false;
         }
-
 
         // DO the move
         ChessPiece temp = board[x1][y1];
         board[x2][y2] = temp;
         board[x1][y1] = null;
 
-
+        whiteTurn = !whiteTurn;
         return true;
     }
 
     /**
      * Move a chess piece.
+     *
      * @param input
      * @return true if the move was successfull
      */
-    public boolean move(String input) {
+    boolean move(String input) {
         // input = "e2, e4"l
         String s[] = input.split(",");
         boolean valid = true;
@@ -167,30 +148,28 @@ public class ChessBoard {
      * Check if there is a winner
      *
      * @return B if black is winner
-     *         W if white is the winner
-     *         N if there is no winner
+     * W if white is the winner
+     * N if there is no winner
      */
     public char checkWinner() {
-        // TODO Check for winner
         char winner;
-        if (!hasKing('B')) {
-            winner = 'W';
-        } else if (!hasKing('W')) {
-            winner = 'B';
+        if (!hasKing(BLACK)) {
+            winner = WHITE;
+        } else if (!hasKing(WHITE)) {
+            winner = BLACK;
         } else {
             winner = 'N';
         }
 
-
         return winner;
     }
 
-   /**
+    /**
      * Converts a row number to a matrix coordinate in "Y"
      */
     private int convertRow(int row) {
         int rowNumber;
-        if (row >=1 && row <= 8) {
+        if (row >= 1 && row <= 8) {
             rowNumber = row - 1;
         } else {
             rowNumber = -1;
@@ -233,6 +212,10 @@ public class ChessBoard {
 
         }
         return columnNumber;
+    }
+
+    public boolean isWhiteTurn() {
+        return whiteTurn;
     }
 
 }

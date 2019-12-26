@@ -6,6 +6,7 @@ public class King extends ChessPiece {
         super("King", color);
     }
 
+    @Override
     public String display() {
         return "K";
     }
